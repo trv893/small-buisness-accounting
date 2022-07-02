@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="./css/main.min.css" /> -->
+    <link rel="stylesheet" href="./public/stylesheets/main.css" />
+    <!-- <link rel="stylesheet" href="./css/custom.min.css" /> -->
+    <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.css" />
+    <title>invoice Generator</title>
+</head>
+
+<body class="bg-light">
+    <div class="container position-relative">
+        <nav id="navbg" class="navbar navbar-expand-sm fixed-bottom border rounded-3 shadow p-lg-2 m-2 bg-primary bg-gradient col col-xl-8 mx-auto mb-4">
+            <ul class="navbar-nav flex-row justify-content-around w-100 ">
+                <li class="nav-item d-flex flex-column pt-3">
+                    <button id="mainCustomerTab" type="button" class="btn btn-light my-auto" data-bs-toggle="" href=".main_tab_toggle">
+                        <h3><i class="bi bi-person-rolodex text-primary nav-icon-css"></i></h3>
+                    </button>
+                    <p><strong>Customers</strong></p>
+                </li>
+                <li class="nav-item d-flex flex-column pt-3">
+                    <button id="mainProposalsTab" type="button" class="btn btn-light" data-bs-toggle="" href=".main_tab_toggle">
+                        <h3><i class="bi bi-file-earmark-medical text-primary nav-icon-css"></i></h3>
+                    </button>
+                    <p><strong>Proposals</strong></p>
+                </li>
+                <li class="nav-item d-flex flex-column pt-3">
+                    <button id="mainInvoicesTab" type="button" class="btn btn-light" data-bs-toggle="" href=".main_tab_toggle">
+                        <h3><i class="bi bi-coin text-primary nav-icon-css"></i></h3>
+                    </button>
+                    <p><strong>Invoices</strong></p>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- *** Start of Customers tab html -->
+
+    <section id="customers-search-container-css" class="container collapse show main_tab_toggle mx-auto">
+        <h1 class="text-center mt-3">
+            Customers
+            <i class="bi btn btn-success bi-plus ms-2 shadow" data-bs-toggle="modal" data-bs-target="#newcustomerModal"></i>
+        </h1>
+        <div class="justify-content-end align-content-end mb-3">
+            <div id="cutomer-search-css" class="input-group">
+                <div class="form-outline">
+                    <input type="search" id="customer_search" class="form-control" />
+                </div>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+            <div>
+            </div>
+        </div>
+        <div id="customerlist">
+            <ul style="margin:0px 0px; padding:0px 0px; list-style:none;">
+                <li>
+                    <a class="d-flex btn btn-light shadow-sm m-1 EditCustomer" onclick="editCustomer(this)" id="customer_{{this.Id}}" data-customer-id={{this.Id}} data-bs-toggle="modal" data-bs-target="#editcustomerModal">
+                        <div class="p-2 col-9">
+                            <div class="row datarow ">
+                                <span class="text-uppercase list-primary"> {{this.FirstName}} {{this.LastName}} </span>
+                            </div>
+                            <div class="row datarow">
+                                <span> {{this.Address}}, {{this.City}} </span>
+                            </div>
+                        </div>
+                        <div class="p-2 d-flex col-3">
+                            <div class="row">
+                                <div class="col">
+                                    <i onclick="location.href='tel:{{this.Phone1}}'" class="bi btn btn-success bi-telephone ms-2 shadow">&nbsp;</i>
+                                    <i onclick="newproposalshow(this)" data-new-customer-id="{{this.Id}}" data-proposal-customer-name="{{this.FirstName}} {{this.LastName}}" class="bi btn btn-success bi-file-earmark-medical ms-2 shadow" data-bs-toggle="modal" data-bs-target="#newProposalModal">&nbsp;</i>
+                                    <i onclick="newinvoiceshow(this)" data-new-invoice-customer-id="{{this.Id}}" data-invoice-customer-name="{{this.FirstName}} {{this.LastName}}" class="bi btn btn-success bi-coin ms-2 shadow" data-bs-toggle="modal" data-bs-target="#newInvoiceModal">&nbsp;</i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                <li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ***End of Customers tab html -->
+    {{!-- START OF EDIT CUSTOMER MODAL --}}
+    <div class="modal fade" id="editcustomerModal" tabindex="-1" aria-labelledby="editcustomerModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editcustomerModalLabel">Edit Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-customer-form">
+                        <div class="form-group row">
+                            <label for="edit_customer_first_name" class="col-sm-2 col-form-label">First</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_customer_first_name" value="{{this.FirstName}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_last_name" class="col-sm-2 col-form-label">Last</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_customer_last_name" value="{{this.LastName}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_company" class="col-sm-2 col-form-label">Company</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_customer_company" value="{{this.Company}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_adress" class="col-sm-2 col-form-label">Address</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_customer_adress" value="{{this.Address}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_city" class="col-sm-2 col-form-label">City</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_customer_city" value="{{this.City}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_state" class="col-sm-2 col-form-label">State</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_customer_state" value="{{this.State}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_zip" class="col-sm-2 col-form-label">Zip</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_customer_zip" value="{{this.Zip}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_phone1" class="col-sm-2 col-form-label">Phone</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="edit_customer_phone1" value="{{this.Phone1}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_phone2" class="col-sm-2 col-form-label">Phone</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="edit_customer_phone2" value="{{this.Phone2}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_customer_email1" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="edit_customer_email1" value="{{this.Email}}" />
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-around">
+                            <button onclick="postCustomerUpdate(this)" type="button" data-customer-id="{{this.Id}}" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- END OF EDIT CUSTOMER MODAL --}}
+
+    {{!-- START OF NEW CUSTOMER MODAL --}}
+    <!-- Start Modal for pop up to add new customer-->
+    <div class="modal fade" id="newcustomerModal" tabindex="-1" aria-labelledby="newcustomerModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newcustomerModalLabel">New customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group row">
+                            <label for="new_customer_first_name" class="col-sm-2 col-form-label">First Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_customer_first_name" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_last_name" class="col-sm-2 col-form-label">Last Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_customer_last_name" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_company" class="col-sm-2 col-form-label">Company</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_customer_company" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_adress" class="col-sm-2 col-form-label">Adress</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_customer_adress" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_city" class="col-sm-2 col-form-label">City</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_customer_city" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_state" class="col-sm-2 col-form-label">State</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_customer_state" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_zip" class="col-sm-2 col-form-label">Zip</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="new_customer_zip" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_phone1" class="col-sm-2 col-form-label">Phone</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="new_customer_phone1" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_phone2" class="col-sm-2 col-form-label">Phone 2</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="new_customer_phone2" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_customer_email1" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="new_customer_email1" />
+                            </div>
+                        </div>
+
+                        <div class="modal-footer d-flex justify-content-around">
+                            <button onclick="postCreateNewCustomer(this)" type="button" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{!-- END OF NEW CUSTOMER MODAL --}}
+
+
+    <!-- *** Start Modal for Proposals tab -->
+
+    <section id="agg_proposal-container-css" class="container collapse">
+        <h1 class="text-center mt-3">
+            Proposals
+        </h1>
+        <div id="proposal-search-css" class="input-group">
+            <div class="form-outline">
+                <input type="search" id="proposal_search" class="form-control" />
+            </div>
+            <button type="button" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+        <!-- Start of proposals tab for individual clients -->
+        <div id="proposalSeach">
+            <ul style="margin:0px 0px; padding:0px 0px; list-style:none;">
+                <li>
+                    <a class="d-flex btn btn-light shadow-sm m-1 EditCustomer" onclick="editproposal(this)" id="edit_proposal_{{this.Id}}" data-proposal-id={{this.Id}} data-bs-toggle="modal" data-bs-target="#editProposalModal">
+                        <div class="p-2 col-9">
+                            <div class="datarow">
+                                <span class="text-uppercase list-primary">{{this.JobName}}</span><span>&nbsp;- {{formatTime this.ProposalDate}}</span>
+                            </div>
+                            <div class="row datarow">
+                                <span> {{this.Proposal_Customer_dbo_customer.FirstName}} {{this.Proposal_Customer_dbo_customer.LastName}} </span>
+                            </div>
+                            <div class="row datarow">
+                                <span> {{this.JobLocation}} </span>
+                            </div>
+                        </div>
+                        <div class="p-2 d-flex col-3">
+                            <div class="row">
+                                <div class="col">
+                                    <i>&nbsp;</i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                <li>
+            </ul>
+        </div>
+
+    </section>
+
+    <!-- *** END Modal for Proposals tab ***CONTAINGS OFF CANVAS AS WELL-->
+    <!-- Start Modal for pop up to add new proposal-->
+    <div class="modal fade" id="newProposalModal" tabindex="-1" aria-labelledby="newProposalModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newProposalModalLabel">New Proposal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group row">
+                            <label for="new_proposal_customer_name" class="col-sm-2 col-form-label">Customer</label>
+                            <div class="col-sm-10">
+                                <input disabled type="text" class="form-control" id="new_proposal_customer_name" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_jobname" class="col-sm-2 col-form-label">Job Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_proposal_jobname" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_date" class="col-sm-2 col-form-label">Date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="new_proposal_date" placeholder="MM/DD/YYYY"
+                                       onfocus="(this.type='date')" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_amount" class="col-sm-2 col-form-label">Amount</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="new_proposal_amount" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_phone" class="col-sm-2 col-form-label">Job Phone</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="new_proposal_phone" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_location" class="col-sm-2 col-form-label">Location</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_proposal_location" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_jobdate" class="col-sm-2 col-form-label">Job Date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="new_proposal_jobdate" placeholder="MM/DD/YYYY"
+                                       onfocus="(this.type='date')" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_terms" class="col-sm-2 col-form-label">Terms</label>
+                            <div class="col-sm-10">
+                                <select id="new_proposal_terms" class="form-select" aria-label="Default select example">
+                                    <option selected="true">In full upon completion</option>
+                                    <option>1/2 Start 1/2 Finish</option>
+                                    <option>Net45</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_proposal_roofing" class="col-sm-2 col-form-label">Roofing </label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" class="form-check-input" id="new_proposal_roofing">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-group d-flex justify-content-around">
+                                <button class="btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#newProposalOffcanvas" aria-controls="newProposalOffcanvas">
+                                    Edit Proposal Text
+                                </button>
+                                <button disabled class="btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#newProposalOffcanvas" aria-controls="newProposalOffcanvas">
+                                    Preview Proposal
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- *** Start of proposal offcanvas itimized list html *** -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="newProposalOffcanvas"
+                     aria-labelledby="newProposalOffcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="newProposalOffcanvasLabel">Proposal Text</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+
+                    <div class="offcanvas-body container w-90 h-100 ">
+
+                        <div id="new-proposal-line-text-area" class="container">
+                            <div class="row">
+                                <textarea data-new-proposal-text=""
+                                          data-new-proposal-customer-id=""
+                                          id="new_proposals_text"
+                                          class="w-100 px-2 mt-2 p-0"
+                                          name="proposals_text"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- *** End of proposal offcanvas itimized list html *** -->
+                    <!--**Start of proposal modal footer**-->
+                    <div class="modal-footer d-flex justify-content-around">
+                        <button onclick="postCreateNewproposal(this)" id="post-trigger-new-proposal-btn" type="button" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-envelope"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                    </div>
+                    <!--**End of proposal modal footer**-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of Modal for new proposal -->
+    <!-- START of EDIT proposal modal -->
+    <div class="modal fade" id="editProposalModal" tabindex="-1" aria-labelledby="editProposalModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProposalModalLabel">Edit Proposal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-proposal-form">
+                        <div class="form-group row">
+                            <label for="edit_proposal_customer_name" class="col-sm-2 col-form-label">Customer</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_proposal_customer_name"
+                                       value="{{this.Proposal_Customer_dbo_customer.FirstName}} {{this.Proposal_Customer_dbo_customer.LastName}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal-jobname" class="col-sm-2 col-form-label">Job Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_proposal-jobname" value="{{this.JobName}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal_date" class="col-sm-2 col-form-label">Date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="edit_proposal_date" value="{{formatTime ProposalDate}}"
+                                       onfocus="(this.type='date')" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal_amount" class="col-sm-2 col-form-label">Amount</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="edit_proposal_amount" value="{{this.ProposalAmount}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal_location" class="col-sm-2 col-form-label">Location</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="edit_proposal_location" value="{{this.JobLocation}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal_phone" class="col-sm-2 col-form-label">Job Phone</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="edit_proposal_phone" value="{{this.JobPhone}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal_date_plans" class="col-sm-2 col-form-label">Plan Date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="edit_proposal_date_plans" value="{{formatTime DateOfPlans}}"
+                                       onfocus="(this.type='date')" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal_terms" class="col-sm-2 col-form-label">Terms</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" id="edit_proposal_terms" aria-label="Select Terms of Payment">
+                                    <option selected>{{this.PaymentTerms}}</option>
+                                    <option>In full upon completion</option>
+                                    <option>1/2 Start 1/2 Finish</option>
+                                    <option>Net45</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_proposal_roofing" class="col-sm-2 col-form-label">Roofing </label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" class="" id="edit_proposal_roofing" checked="{{this.Roofing}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-group d-flex justify-content-around">
+                                <button class="btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#editProposalOffcanvas" aria-controls="editProposalOffcanvas">
+                                    Edit Proposal Text
+                                </button>
+                                <button disabled="disabled" class="btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#editproposalOffcanvas" aria-controls="editProposalOffcanvas">
+                                    Preview Proposal
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- *** Start of EDIT proposal offcanvas itimized list html *** -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="editProposalOffcanvas"
+                     aria-labelledby="editproposalOffcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="editproposalOffcanvasLabel">Proposal Text</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body container w-90 h-100 ">
+                        <div id="added_proposal_line_items"
+                             class="container overflow-scroll  border border-secondary rounded w-100 h-50 mt-4">
+                            <div id="edit-proposal-line-text-area" class="container">
+                                <div class="row">
+                                    <textarea data-edit-proposal-text="{{this.Id}}"
+                                              data-edit-proposal-customer-id="{{this.Proposal_Customer}}"
+                                              id="edit_proposals_text"
+                                              class="w-100 px-2 mt-2 p-0"
+                                              name="proposals_text">{{this.ProposalText}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-around">
+                        <button onclick="postproposalUpdate(this)" type="button" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-envelope"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- *** End of EDIT proposal offcanvas itimized list html *** -->
+                <!--**Start of Edit Modal Footer**-->
+                <div class="modal-footer d-flex justify-content-around">
+                    <button disabled="disabled" type="button" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="bi bi-envelope"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="bi bi-printer"></i>
+                    </button>
+                </div>
+                <!--**End of Edit Modal Footer**-->
+            </div>
+        </div>
+    </div>
+    <!-- End of Modal for EDIT proposal -->
+    <!-- Start Modal for pop up to add new invoice ***^^contained offcanvas for proposals-->
+    <div class="modal fade" id="newInvoiceModal" tabindex="-1" aria-labelledby="newInvoiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newInvoiceModalLabel">New Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group row">
+                            <label for="new_invoices_customer_name" class="col-sm-2 col-form-label">
+                                Bill To:
+                            </label>
+                            <div class="col-sm-10">
+                                <input disabled
+                                       type="text"
+                                       class="form-control"
+                                       id="new_invoices_customer_name" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_invoices_date" class="col-sm-2 col-form-label">Date</label>
+                            <div class="col-sm-10">
+                                <input type="date"
+                                       class="form-control"
+                                       id="new_invoices_date"
+                                       onfocus="(this.type='date')" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_invoices_amount" class="col-sm-2 col-form-label">Amount</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="new_invoices_amount" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_invoice_adress" class="col-sm-2 col-form-label">Address</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_invoice_adress" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_invoice_city" class="col-sm-2 col-form-label">City</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_invoice_city" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_invoice_state" class="col-sm-2 col-form-label">State</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_invoice_state" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_invoice_zip" class="col-sm-2 col-form-label">Zip</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="new_invoice_zip" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="new_bill_to_terms" class="col-sm-2 col-form-label">Terms</label>
+                            <div class="col-sm-10">
+                                <select id="new_bill_to_terms" class="billToTerms form-select" aria-label="Default select example">
+                                    <option selected>In full upon completion</option>
+                                    <option>1/2 Start 1/2 Finish</option>
+                                    <option>Net45</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="newInvoiceIsPaid">
+                            <label class="form-check-label" for="newInvoiceIsPaid">Is Paid</label>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-group d-flex justify-content-around">
+                                <button id="billTonewButon" data-invoice-id="{{this.Id}}" class="billTonewButon btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#newInvoiceOffcanvas" aria-controls="newInvoiceOffcanvas">
+                                    New Invoice Text
+                                </button>
+                                <button disabled="disabled" class="newPreviewInvoiceButton btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#"
+                                        aria-controls="#">
+                                    View Invoice Preview
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- *** Start of invoice offcanvas itimized list html *** -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="newInvoiceOffcanvas"
+                     aria-labelledby="newInvoiceOffcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="newInvoiceOffcanvasLabel">Invoice Body</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body container w-90 h-100 ">
+                        <div id="add_invoice_item_container" class="d-flex flex-column justify-content-center">
+                            <textarea class="w-100 px-2  mt-2 p-0" name="newinvoices_text1" id="newinvoices_text1"
+                                      placeholder="Type an individual item, its cost per unit and the quantity of units then press add item button"></textarea>
+                            <div class=" d-flex flex-row w-100 mt-1 ">
+                                <div id="invoice_item_price1" class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input id="new-invoice-list-item-price-1" type="text" class="form-control" aria-label="">
+                                </div>
+                                <div id="invoice_item_quantity1" class="input-group mx-auto">
+                                    <span class="input-group-text">#</span>
+                                    <input id="new-invoice-list-item-quantity-1" type="text" class="form-control" aria-label="">
+                                </div>
+                            </div>
+                            <button id="newInvoiceAddLineItemButton" type="button" class="btn btn-success w-50 mt-2 shadow-sm mx-auto">
+                                Add Item
+                            </button>
+                        </div>
+                        <div id="added_invoice_line_items"
+                             class="container overflow-scroll  border border-secondary rounded w-100 h-50 mt-4">
+                            <div id="addedInvoiceListItems" class="container">
+                                <div class="row">
+                                    <textarea id="newinvoices_text${invoiceLineItemsCount}" class="w-100 px-2  mt-2 p-0" name="newinvoices_text2">${$("#newinvoices_text1").val()}</textarea>
+                                    <div class=" d-flex flex-row w-100 mt-1">
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input id="new-added-invoice-list-item-price-${invoiceLineItemsCount}" value=${$("#new-invoice-list-item-price-1").val()} type="text" class="form-control" aria-label="">
+                                        </div>
+                                        <div id="####invoice_item_quantity" class="input-group mx-auto">
+                                            <span class="input-group-text">#</span>
+                                            <input id="new-added-invoice-list-item-quantity-${invoiceLineItemsCount}" value=${$("#new-invoice-list-item-quantity-1").val()} type="text" class="form-control" aria-label="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-around">
+                        <button onclick="postCreateNewinvoice()" type="button" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-envelope"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- *** End of new invoice offcanvas itimized list html *** -->
+                <!-- new invoice modal footer -->
+                <div class="modal-footer d-flex justify-content-around">
+
+                    <button disabled="disabled" type="button" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="bi bi-envelope"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="bi bi-printer"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of Modal for new invoice -->
+    <!-- Start Modal for pop up to edit invoice ***^^contained offcanvas for proposals-->
+    <div class="modal fade" id="editInvoiceModal" tabindex="-1" aria-labelledby="editInvoiceModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editInvoiceModalLabel">Edit Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-invoice-form">
+                        <div class="form-group row">
+                            <label for="edit_invoices_customer_name" class="col-sm-2 col-form-label">Bill To: </label>
+                            <div class="col-sm-10">
+                                <input type="text" class="billToName form-control" id="edit_invoices_customer_name"
+                                       value="{{this.BillToName}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_invoices_date" class="col-sm-2 col-form-label">Date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="billToDate form-control" id="edit_invoices_date" value="{{formatTime InvoiceDate}}"
+                                       onfocus="(this.type='date')" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_invoices_amount" class="col-sm-2 col-form-label">Amount</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="billToAmount form-control" id="edit_invoices_amount" value="{{sum this}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_invoice_adress" class="col-sm-2 col-form-label">Address</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="billTo Adress form-control" id="edit_invoice_adress" value="{{this.BillToAddress}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_invoice_city" class="col-sm-2 col-form-label">City</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="billToCity form-control" id="edit_invoice_city" value="{{this.BillToCity}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_invoice_state" class="col-sm-2 col-form-label">State</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="billToState form-control" id="edit_invoice_state" value="{{this.BillToState}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_invoice_zip" class="col-sm-2 col-form-label">Zip</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="billToZip form-control" id="edit_invoice_zip" value="{{this.BillToZip}}" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="edit_invoices_terms" class="col-sm-2 col-form-label">Terms</label>
+                            <div class="col-sm-10">
+                                <select id="edit_bill_to_terms" class="billToTerms form-select" aria-label="Default select example">
+                                    <option selected>{{this.Terms}}</option>
+                                    <option>In full upon completion</option>
+                                    <option>1/2 Start 1/2 Finish</option>
+                                    <option>Net45</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-group d-flex justify-content-around">
+                                <button id="billToEditButon" data-invoice-id="{{this.Id}}" class="billToEditButon btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#editInvoiceOffcanvas" aria-controls="editInvoiceOffcanvas">
+                                    Edit invoice Text
+                                </button>
+                                <button disabled="disabled" class="editPreviewInvoiceButton btn btn-primary mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#"
+                                        aria-controls="#">
+                                    View Invoice Preview
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <!-- *** Start of  Edit invoice offcanvas itimized list html *** -->
+                <div class="offcanvas offcanvas-start " tabindex="-1" id="editInvoiceOffcanvas"
+                     aria-labelledby="editInvoiceOffcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="editInvoiceOffcanvasLabel">Invoice Body</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body container w-90 h-100 ">
+
+                        <div id="added_invoice_line_items"
+                             class="container overflow-scroll  border border-secondary rounded w-100 h-50 mt-4">
+                            <div class="container">
+                                <div id="edit-invoice-line-items" class="row">
+                                    <div class="editInvoiceLines border border-light shadow">
+                                        <textarea data-edit-invoice-line-item-id="{{this.Id}}" class="billToInvoiceLine w-100 px-2  mt-2 p-0" name="invoices_text">{{this.Description}}</textarea>
+                                        <div class=" d-flex flex-row w-100 mt-1 ">
+                                            <div data-edit-invoice-line-item-Amount="{{this.Amount}}" class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input value="{{this.Amount}}" type="text" class="billToItemAmount form-control" aria-label="" />
+                                            </div>
+                                            <div data-edit-invoice-line-item-#="{{this.Quantity}}" class="input-group mx-auto">
+                                                <span class="input-group-text">#</span>
+                                                <input value="{{this.Quantity}}" type="text" class="billToItemQuantity form-control" aria-label="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-around">
+                        <button onclick="postinvoiceUpdate(this)" type="button" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-envelope"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- *** End of EDIT invoice offcanvas itimized list html *** -->
+                {{!-- edit invoice modal footer --}}
+                <div class="modal-footer d-flex justify-content-around">
+                    <button disabled="disabled" type="button" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="bi bi-envelope"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="bi bi-printer"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start of main agg invoices page -->
+    <section id="agg_invoices-container-css" class="container collapse main_tab_toggle">
+        <h1 class="text-center mt-3">
+            Invoices
+            {{!-- <i class="bi btn btn-success bi-plus ms-2 shadow" data-bs-toggle="modal" data-bs-target="#newInvoiceModal"></i> --}}
+        </h1>
+
+        <div id="invoice-search-css" class="input-group">
+            <div class="form-outline">
+                <input type="search" id="invoice_search" class="form-control" />
+            </div>
+            <button type="button" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+        <!-- Start of invoices tab for individual clients -->
+        <div id="invoices">
+            <ul style="margin:0px 0px; padding:0px 0px; list-style:none;">
+                <li>
+                    <a class="d-flex btn btn-light shadow-sm m-1 EditCustomer" onclick="editInvoice(this)" id="edit_invoice_{{this.Id}}" data-invoice-id="{{this.Id}}" data-bs-toggle="modal" data-bs-target="#editInvoiceModal">
+
+                        <div class="p-2 col-9">
+                            <div class="datarow">
+                                <span class="text-uppercase list-primary">{{this.BillToName}}</span><span>&nbsp;- {{formatTime this.InvoiceDate}}</span>
+                            </div>
+
+                            <div class="row datarow">
+                                <span> {{this.Invoice_Customer_dbo_customer.FirstName}} {{this.Invoice_Customer_dbo_customer.LastName}} </span>
+                            </div>
+                            <div class="row datarow">
+                                <span>Amount: {{sum this}} </span>
+                            </div>
+                        </div>
+                        <div class="p-2 d-flex col-3">
+                            <div class="row">
+                                <div class="col">
+                                    <i>&nbsp;</i>
+
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                <li>
+            </ul>
+        </div>
+    </section>
+    <!-- End of main agg invoices page -->
+
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+    <script src="https://cdn.auth0.com/js/auth0/9.18/auth0.min.js"></script>
+
+    <script src="../../uijs/ui.js"></script>
+    <script src="../../uijs/customers.js"></script>
+    <script src="../../uijs/proposals.js"></script>
+    <script src="../../uijs/invoices.js"></script>
+
+</body>
+
+</html>
