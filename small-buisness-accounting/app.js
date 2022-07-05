@@ -29,11 +29,11 @@ app.use('/', routes);
 app.use('/', apiRoutes);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-});
+// app.use(function (req, res, next) {
+//     var err = new Error('Not Found');
+//     err.status = 404;
+//     next(err);
+// });
 
 // error handlers
 
@@ -59,20 +59,20 @@ app.use(function (req, res, next) {
 //    });
 //});
 
-app.get('/', function (req, res) {
-    var options = {
-        root: path.join(__dirname)
-    };
+// app.get('/', function (req, res) {
+//     var options = {
+//         root: path.join(__dirname)
+//     };
 
-    var fileName = 'index.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            next(err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
-});
+//     var fileName = 'index.html';
+//     res.sendFile(fileName, options, function (err) {
+//         if (err) {
+//             next(err);
+//         } else {
+//             console.log('Sent:', fileName);
+//         }
+//     });
+// });
 
 app._router.stack.forEach(function (r) {
     if (r.route && r.route.path) {

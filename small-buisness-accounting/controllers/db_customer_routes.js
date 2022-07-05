@@ -50,16 +50,24 @@ router.get('/customer', async (req, res) => {
 });
 
 router.get('/customer/:id', async (req, res) => {
-    try {
-        var CustomerData = await models.dbo_customers.findAll(
-            req.body,
+    var findOpts = {
+        where: {
+            Id: parseInt(req.params.id)
+        },
+        raw: true,
+        include: [
             {
-                where: {
-                    Id: parseInt(req.params.id)
-                },
-                raw: true
+                model: models.dbo_invoices,
+                as: "dbo_invoices",
+            },
+            {
+                model: models.dbo_proposals,
+                as: "dbo_proposals",
             }
-        );
+        ],
+    };
+    try {
+        var CustomerData = await models.dbo_customers.findAll(findOpts);
         if (CustomerData[0] == 0) {
             res.status(404).json({ message: "no records found to update with given id" });
             return;
@@ -91,7 +99,7 @@ router.put('/customer/:id', async (req, res) => {
     }
 });
 
-router.post('/customer/:id', async (req, res) => {
+router.post('/customer/', async (req, res) => {
     try {
         req.body.DateCreated = Date.now()
         const customerData = await models.dbo_customers.create(
