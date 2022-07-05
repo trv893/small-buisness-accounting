@@ -29,23 +29,38 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include=".env" />
     <Content Include="app.js" />
+    <Content Include="controllers\config.js" />
+    <Content Include="controllers\db_customer_routes.js" />
+    <Content Include="controllers\db_invoice_routes.js" />
+    <Content Include="controllers\db_proposal_routes.js" />
+    <Content Include="controllers\index.js" />
+    <Content Include="index.html" />
+    <Content Include="models\dbo_customers.js" />
+    <Content Include="models\dbo_invoicelines.js" />
+    <Content Include="models\dbo_invoices.js" />
+    <Content Include="models\dbo_proposals.js" />
+    <Content Include="models\dbo_rolepermissions.js" />
+    <Content Include="models\dbo_settings.js" />
+    <Content Include="models\index.js" />
+    <Content Include="models\init-models.js" />
+    <Content Include="public\javascripts\customers.js" />
     <Content Include="routes\index.js" />
     <Content Include="routes\users.js" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\main.css" />
     <Content Include="README.md" />
-    <Content Include="views\index.pug" />
-    <Content Include="views\layout.pug" />
-    <Content Include="views\error.pug" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="controllers\" />
+    <Folder Include="models\" />
+    <Folder Include="sequelize-auto\" />
     <Folder Include="public\" />
     <Folder Include="public\images\" />
     <Folder Include="public\javascripts\" />
     <Folder Include="public\stylesheets\" />
     <Folder Include="routes\" />
-    <Folder Include="views\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
